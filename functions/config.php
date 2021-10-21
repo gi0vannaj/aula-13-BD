@@ -27,6 +27,11 @@ const BD_DATABASE = 'dbcontatos20212t';
 //mensagens de aceitaçao e validaçao de dados no banco
     
     const BD_MSG_INSERIR = "Regitro salvo com sucesso no Bando de Dados";
+    const BD_MSG_EXCLUIR = "
+                <script>
+                    alert('Regitro excluido com sucesso do Bando de Dados');
+                    window.location.href='../index.php'
+                </script>";
     const BD_MSG_ERRO = "ERRO: Nao foi possivel manipular os dados no banco de dados";
 
 ?>

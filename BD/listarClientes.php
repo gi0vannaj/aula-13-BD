@@ -7,8 +7,9 @@
 *****************************************************************/
 
 //Import do arquivo
-require_once('BD/conexaoMysql.php');
+require_once(SRC.'BD/conexaoMysql.php');
 
+//retorna todos os registros existentes do banco
 function listar()
 {
     $sql = "select * from tblcliente order by idcliente desc ";
@@ -16,13 +17,26 @@ function listar()
     //abre a conexao com o banco de dados
     $conexao = conexaoMysql(); 
     
-    //solicita ao B a execuçao do script SQL
+    //solicita ao Bd a execuçao do script SQL
     $select = mysqli_query($conexao ,$sql);
     
     return $select;
 }
 
-
+//retorna apenas um registro com base no id
+function buscar($idCliente)
+{
+     $sql = "select * from tblcliente
+            where idcliente = ".$idCliente;
+    
+    //abre a conexao com o banco de dados
+    $conexao = conexaoMysql(); 
+    
+    //solicita ao Bd a execuçao do script SQL
+    $select = mysqli_query($conexao ,$sql);
+    
+    return $select;
+}
 
 
 

@@ -5,6 +5,8 @@ body, h1, p{
     margin: 0px;
     padding: 0px;
 }
+
+
 #cadastro{
     width: 800px;
     min-height: 700px;
@@ -205,5 +207,31 @@ input[type=email]:hover{
 .destaque{
     font-weight: bold;
 }
+
+/*modal*/
+#containerModal{
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    position: fixed;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    
+}
+#modal{
+    width: 50vw;
+    height: 60vh;
+    background-color: aliceblue;
+    margin: auto;
+    
+}
+
+
+
+
+
+
+
 
 

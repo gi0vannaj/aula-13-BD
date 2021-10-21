@@ -8,7 +8,9 @@
 require_once('../functions/config.php');
 
 //Import do arquivo para inserir no BD
-require_once(SRC.'/bd/inserirCliente.php');
+require_once(SRC.'/BD/inserirCliente.php');
+
+require_once(SRC.'/BD/atualizarCliente.php');
 
 
 //Declaração de variaveis
@@ -19,6 +21,12 @@ $telefone = (string) null;
 $celular = (string) null;
 $email = (string) null;
 $obs = (string) null;
+
+//validaçao para saber se o id do registro esta chegando pelea url(modo para atualizar um registro)
+if(isset($_GET['id']))
+    $id = (int) $_GET['id'];
+else
+    $id = (int) 0;
 
 //$_SERVER['REQUEST_METHOD'] - Verifica qual o tipo de requisição foi encaminhada pelo form (GET / POST)
 if($_SERVER['REQUEST_METHOD'] == 'POST')
@@ -57,11 +65,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
             "telefone"  => $telefone,
             "celular"   => $celular,
             "email"     => $email,
-            "obs"       => $obs
+            "obs"       => $obs,
+            "id"        => $id
         
         );
-     
-        //Chama a função inserir do arquivo inserirCliente.php, e encaminha o array com os dados do cliente    
+        
+        //Valiçao para saber se é para inserir um novo registro ou se é  um registro exustente no banco de dados
+        if(strtoupper($_GET['modo']) == 'SALVAR')
+        {
+            
+             //Chama a função inserir do arquivo inserirCliente.php, e encaminha o array com os dados do client   
         if (inserir($cliente))
         {
             echo("
@@ -81,6 +94,28 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
                 </script>
             
             ");
+            
+        
+        }
+            
+       }elseif (strtoupper($_GET['modo']) == 'ATUALIZAR')
+        {
+            if(editar($cliente))
+                echo("
+                <script>
+                    alert('".BD_MSG_INSERIR."');
+                    window.location.href = '../index.php';
+                </script>
+            
+                    ");
+            else
+                echo("
+                    <script>
+                        alert('".BD_MSG_ERRO."');
+                        window.history.back();
+                    </script>
+
+                ");
             
         }
     }

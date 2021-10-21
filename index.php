@@ -1,4 +1,18 @@
 <?php
+//ativa a utilizaçao de variaveuis de sessao
+session_start();
+
+
+$nome = (string) null;
+$rg = (string) null;
+$cpf = (string) null;
+$telefone = (string) null;
+$celular = (string) null;
+$email = (string) null;
+$obs = (string) null;
+$id = (int) 0;
+$modo = (string) "Salvar";//varaiavel utilizada para definir o modo de manipulaçao com o banco de dados(se for salvar sera feito o insert, se tiver atualizar sera feito update)
+
 
 require_once('functions/config.php');//IMPORT DO ARQUIVO DE CONFIGURAÇAO DE VARIAVEIS E CONSTANTES
    
@@ -6,6 +20,24 @@ require_once(SRC.'BD/conexaoMysql.php');
 //    conexaoMysql();
 
 require_once(SRC.'controles/exibeDadosClientes.php');
+
+//verifica a existencia da variavel de sessao que usamos para trazer os dados para editar
+if(isset($_SESSION['cliente']))
+{
+    $nome = $_SESSION['cliente'] ['nome'];
+    $id = $_SESSION['cliente'] ['idcliente'];
+    $rg = $_SESSION['cliente'] ['rg'];
+    $cpf = $_SESSION['cliente'] ['cpf'];
+    $telefone = $_SESSION['cliente'] ['telefone'];
+    $celular = $_SESSION['cliente'] ['celular'];
+    $email = $_SESSION['cliente'] ['email'];
+    $obs = $_SESSION['cliente'] ['obs'];
+    $modo = "Atualizar";
+    
+}
+
+//elimina um objeto, variavel da memoria
+unset($_SESSION['cliente']);
 
 
 ?>
@@ -19,9 +51,48 @@ require_once(SRC.'controles/exibeDadosClientes.php');
         <meta charset="UTF-8">
         <title> Cadastro </title>
         <link rel="stylesheet" type="text/css" href="style/style.css">
+        <script src="js/jquery.js"></script>
+        
+        <script>
+            $(document).ready(function(){
+                //alterando uma propriedade de css ao carregar da pagina
+                $('#containerModal').css('display','none');
+                
+                //abre a modal
+               $('.pesquisar').click(function(){
+                  $('#containerModal').fadeIn(1000);
+                   
+                   //recebe o id do cliente que foi adicionado pelo data atributo no html
+                   let idcliente= $(this).data('id');
+                   
+                   //realiza uma requisiçao para consumir dados de uma outra pagina
+                   $.ajax({
+                       type:"GET",  //tipo de requisiçao (get,post,put,etc)
+                       url:"visualizarDados.php",  //url da pagina que sera consumida
+                       data:{id:idcliente},
+                       success:function(dados){  //se a requisiçao der certo, iremos receber o conteudo na variavel dados
+                           $('#modal').html(dados);
+                       }
+                   });
+               }); 
+                
+                //fecha a modal
+                $('#fecharModal').click(function(){
+                    $('#containerModal').fadeOut();
+                });
+            });
+        
+        </script>
 
     </head>
     <body>
+        <div id="containerModal">
+            <span id="fecharModal">Fechar</span>
+            <div id="modal">
+                teste
+            
+            </div>
+        </div>
         <div id="cadastro"> 
             <div id="cadastroTitulo"> 
                 <h1> Cadastro de Contatos </h1>
@@ -40,14 +111,16 @@ require_once(SRC.'controles/exibeDadosClientes.php');
 
                 -->
         
-                <form  name="frmCadastro" method="post" action="controles/recebeDadosClientes.php" >
-                   
+
+            <form  name="frmCadastro" method="post" action="controles/recebeDadosClientes.php?modo=<?=$modo?>&id=<?=$id?>"> <!--as variaveis modo e id que foram utilizadas no action do from sao responsaveis por encaminhar para a pagina recebeDadosCliente.php duas informaçoes: 
+                modo- define se é para inserir ou atualizar
+                id- identifica o registro a ser atualiazado no BD -->
                     <div class="campos">
                         <div class="cadastroInformacoesPessoais">
                             <label> Nome: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="text" name="txtNome" value="" placeholder="Digite seu Nome">
+                            <input type="text" name="txtNome" value="<?=$nome?>" placeholder="Digite seu Nome">
                         </div>
                     </div>
                     <div class="campos">
@@ -55,7 +128,7 @@ require_once(SRC.'controles/exibeDadosClientes.php');
                             <label> RG: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="text" name="txtRg" value="" placeholder="Digite seu Rg">
+                            <input type="text" name="txtRg" value="<?=$rg?>" placeholder="Digite seu Rg">
                         </div>
                     </div>
                     <div class="campos">
@@ -63,7 +136,7 @@ require_once(SRC.'controles/exibeDadosClientes.php');
                             <label> CPF: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="text" name="txtCpf" value="" placeholder="Digite seu CPF">
+                            <input type="text" name="txtCpf" value="<?=$cpf?>" placeholder="Digite seu CPF">
                         </div>
                     </div>
                     <div class="campos">
@@ -71,7 +144,7 @@ require_once(SRC.'controles/exibeDadosClientes.php');
                             <label> Telefone: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="tel" name="txtTelefone" value="" placeholder="Digite seu Telefone">
+                            <input type="tel" name="txtTelefone" value="<?=$telefone?>" placeholder="Digite seu Telefone">
                         </div>
                     </div>
                     <div class="campos">
@@ -79,7 +152,7 @@ require_once(SRC.'controles/exibeDadosClientes.php');
                             <label> Celular: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="tel" name="txtCelular" value="" placeholder="Digite seu Celular">
+                            <input type="tel" name="txtCelular" value="<?=$celular?>" placeholder="Digite seu Celular">
                         </div>
                     </div>
                     <div class="campos">
@@ -87,7 +160,7 @@ require_once(SRC.'controles/exibeDadosClientes.php');
                             <label> Email: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="email" name="txtEmail" value="" placeholder="Digite seu Email">
+                            <input type="email" name="txtEmail" value="<?=$email?>" placeholder="Digite seu Email">
                         </div>
                     </div>
                     <div class="campos">
@@ -100,7 +173,7 @@ require_once(SRC.'controles/exibeDadosClientes.php');
                     </div>
                     <div class="enviar">
                         <div class="enviar">
-                            <input type="submit" name="btnEnviar" value="Salvar">
+                            <input type="submit" name="btnEnviar" value="<?=$modo?>">
                         </div>
                     </div>
                 </form>
@@ -123,6 +196,7 @@ require_once(SRC.'controles/exibeDadosClientes.php');
                 <?php
                   $dadosClientes =  exibirClientes();
                     
+                                        //cria um array de dados do banco
                     while($rsClientes = mysqli_fetch_assoc($dadosClientes))
                     {
                        
@@ -132,9 +206,16 @@ require_once(SRC.'controles/exibeDadosClientes.php');
                     <td class="tblColunas registros"><?=$rsClientes['celular']?></td>
                     <td class="tblColunas registros"><?=$rsClientes['email']?></td>
                     <td class="tblColunas registros">
-                        <img src="img/edit.png" alt="Editar" title="Editar" class="editar">
-                        <img src="img/trash.png" alt="Excluir" title="Excluir" class="excluir">
-                        <img src="img/search.png" alt="Visualizar" title="Visualizar" class="pesquisar">
+                        
+                        <a href="controles/editarDadosClientes.php?id=<?=$rsClientes['idcliente']?>">
+                            <img src="img/edit.png" alt="Editar" title="Editar" class="editar">
+                        </a>
+                        
+                        <a onclick="return confirm('Tem certeza que deseja excluir');"href="controles/excluirDadosClientes.php?id=<?=$rsClientes['idcliente']?>">
+                            <img src="img/trash.png" alt="Excluir" title="Excluir" class="excluir">
+                        </a>
+                        
+                        <img src="img/search.png" alt="Visualizar" title="Visualizar" class="pesquisar" data-id="<?=$rsClientes['idcliente']?>">
                     </td>
                 </tr>
                 <?php
